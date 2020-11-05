@@ -1,0 +1,40 @@
+﻿@page "/routertest"
+@page "/routertest/{param}"
+@inject NavigationManager navManager
+<h3>RouterParam Test</h3>
+
+<p>
+    Param: @Param
+    QueryString: @QueryString
+    <ul>
+        @foreach (var q in QuerySegment)
+        {
+            <li>@q</li>
+        }   
+    </ul>
+    
+</p>
+
+<button @onclick="GotoCounter">Go to Counter</button>
+<Counter Where="@navManager.Uri"></Counter>
+@code {
+    [Parameter] // in what situ should we use? two-way bindings?
+    public string Param { get; set; }
+
+    [Parameter]
+    public string QueryString { get; set; }
+    
+    private IList<string> QuerySegment { get; set; }
+    
+    private void GotoCounter()
+    {
+        navManager.NavigateTo("counter");
+    }
+
+    protected override void OnInitialized()
+    {
+        QueryString = new Uri(navManager.Uri).Query;
+        QuerySegment = QueryString.Split("&").ToList();
+    }
+
+}
